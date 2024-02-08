@@ -21,7 +21,28 @@ class App {
 
     this._renderer.setAnimationLoop(this._update.bind(this));
     window.addEventListener('resize', this._resize.bind(this), false);
+
+    window.addEventListener('keydown', this._onKeyDown.bind(this), false);
+    window.addEventListener('keyup', this._onKeyUp.bind(this), false);
+
+    this._keys = {
+      w: false, a: false, s: false, d: false,
+      ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false
+    };
+
     this._resize();
+  }
+
+  _onKeyDown(event) {
+    if (event.key in this._keys) {
+      this._keys[event.key] = true;
+    }
+  }
+
+  _onKeyUp(event) {
+    if (event.key in this._keys) {
+      this._keys[event.key] = false;
+    }
   }
 
   _setupCamera() {
@@ -57,10 +78,8 @@ class App {
   }
 
   _setupBox() {
-    // const geometry = new THREE.BoxGeometry(1.2, 1, 1);
-    // const material = new THREE.MeshPhongMaterial({color: 0x000000, opacity: 0.5, transparent: true});
-    // this._box = new THREE.Mesh(geometry, material);
-    // this._scene.add(this._box);
+
+
     const geometry = new THREE.BoxGeometry(1.2, 1, 1);
     const loader = new THREE.TextureLoader();
     const texture = loader.load('GlassTextur.png'); // 유리 텍스처 이미지를 로드
@@ -79,7 +98,8 @@ class App {
   _update() {
     this._ball.position.add(this._ballVelocity);
 
-    // Check for collision with paddles
+//    Check for collision with paddles
+    const paddleSpeed = 0.01;
     const paddleWidth = this._leftPaddle.geometry.parameters.width;
     const paddleHeight = this._leftPaddle.geometry.parameters.height;
     if (this._ball.position.distanceTo(this._leftPaddle.position) < paddleWidth / 2 + paddleHeight / 2) {
@@ -96,7 +116,38 @@ class App {
     if (Math.abs(this._ball.position.y) > boxHeight - 0.02) {
       this._ballVelocity.y = -this._ballVelocity.y;
     }
+
+    if (this._keys.w && this._leftPaddle.position.y < boxHeight - paddleHeight) {
+      this._leftPaddle.position.y += paddleSpeed;
+    }
+    if (this._keys.s && this._leftPaddle.position.y > -boxHeight + paddleHeight) {
+      this._leftPaddle.position.y -= paddleSpeed;
+    }
+    if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight - paddleHeight) {
+      this._rightPaddle.position.y += paddleSpeed;
+    }
+    if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight + paddleHeight) {
+      this._rightPaddle.position.y -= paddleSpeed;
+    }
+    
     this._renderer.render(this._scene, this._camera);
+
+
+    // const paddleSpeed = 0.01;
+    // const boxHeight = this._box.geometry.parameters.height / 2;
+    // const paddleHeight = this._leftPaddle.geometry.parameters.height / 2;
+    // if (this._keys.w && this._leftPaddle.position.y < boxHeight - paddleHeight) {
+    //   this._leftPaddle.position.y += paddleSpeed;
+    // }
+    // if (this._keys.s && this._leftPaddle.position.y > -boxHeight + paddleHeight) {
+    //   this._leftPaddle.position.y -= paddleSpeed;
+    // }
+    // if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight - paddleHeight) {
+    //   this._rightPaddle.position.y += paddleSpeed;
+    // }
+    // if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight + paddleHeight) {
+    //   this._rightPaddle.position.y -= paddleSpeed;
+    // }
   }
 }
 
