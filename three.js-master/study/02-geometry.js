@@ -12,6 +12,8 @@ class App {
     this._renderer.setClearColor('#87CEEB');
     container.appendChild(this._renderer.domElement);
 
+    var sideAScore;
+    var sideBScore;
     this._setupCamera();
     this._setupLight();
     this._setupPaddle();
@@ -35,6 +37,9 @@ class App {
      this._collisionSideDiv.style.fontFamily = 'Arial, sans-serif';
      document.body.appendChild(this._collisionSideDiv);
 
+
+     this.sideAScore = 0;
+     this.sideBScore = 0;
     this._keys = {
       w: false, a: false, s: false, d: false,
       ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false
@@ -124,7 +129,6 @@ class App {
         this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
       }
     }
-
     // if (this._ball.position.distanceTo(this._leftPaddle.position) < paddleWidth / 2 + paddleHeight / 2 ) {
     //   this._ballVelocity.x = Math.abs(this._ballVelocity.x);
     // } else if (this._ball.position.distanceTo(this._rightPaddle.position) < paddleWidth / 2 + paddleHeight / 2 ) {
@@ -134,13 +138,32 @@ class App {
     const boxWidth = this._box.geometry.parameters.width / 2;
     const boxHeight = this._box.geometry.parameters.height / 2;
 
-    if (Math.abs(this._ball.position.x) > boxWidth) {
+    
+    if (Math.abs(this._ball.position.x) > boxWidth) {      
+      if (this._ball.position.x > 0) {
+        this.sideAScore++;
+      }
+      else {
+        this.sideBScore++;
+      }
       this._ballVelocity.x = -this._ballVelocity.x;
-      this._collisionSideDiv.textContent = this._ball.position.x > 0 ? '오른쪽 면에 닿았습니다.' : '왼쪽 면에 닿았습니다.';
+      this._collisionSideDiv.textContent = this._ball.position.x > 0 ? "오른쪽 면에 닿았습니다." + this.sideAScore.toString() : "왼쪽 면에 닿았습니다." + this.sideBScore.toString();
     }
     if (Math.abs(this._ball.position.y) > boxHeight) {
+      //this.sideBScore++;
       this._ballVelocity.y = -this._ballVelocity.y;
       this._collisionSideDiv.textContent = this._ball.position.y > 0 ? '위쪽 면에 닿았습니다.' : '아래쪽 면에 닿았습니다.';
+    }
+    
+    if (this.sideAScore >= 5 || this.sideBScore >= 5) {
+      // End the game and display the winner
+      this._renderer.setAnimationLoop(null); // Stop the game loop
+      const winner = this.sideAScore >= 5 ? 'A' : 'B';
+      this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
+      this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
+      this._collisionSideDiv.style.color = 'red'; // Change the text color
+  
+      return; // Skip the rest of the update
     }
     
     if (this._keys.w && this._leftPaddle.position.y < boxHeight - paddleHeight) {
