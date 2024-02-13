@@ -1,8 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
 
-
-
 class App {
   constructor() {
     const container = document.querySelector('#webgl-container');
@@ -12,13 +10,13 @@ class App {
     this._renderer.setClearColor('#87CEEB');
     container.appendChild(this._renderer.domElement);
 
-    var sideAScore;
-    var sideBScore;
     this._setupCamera();
     this._setupLight();
     this._setupPaddle();
     this._setupBall();
     this._setupBox();
+    this._setupScoreBoard();
+
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
 
     this._renderer.setAnimationLoop(this._update.bind(this));
@@ -26,7 +24,6 @@ class App {
 
     window.addEventListener('keydown', this._onKeyDown.bind(this), false);
     window.addEventListener('keyup', this._onKeyUp.bind(this), false);
-
 
      // Add a div element for displaying the collision side
      this._collisionSideDiv = document.createElement('div');
@@ -41,8 +38,8 @@ class App {
      this.sideAScore = 0;
      this.sideBScore = 0;
     this._keys = {
-      w: false, a: false, s: false, d: false,
-      ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false
+      w: false, s: false,
+      ArrowUp: false, ArrowDown: false
     };
 
     this._resize();
@@ -104,6 +101,32 @@ class App {
     this._scene.add(this._box);
 
   }
+
+  _setupScoreBoard() {
+
+    const canvas = document.createElement('canvas');
+    this._boardContext = canvas.getContext('2d');
+
+    canvas.width = 512;
+    canvas.height = 512;
+    
+    this._boardContext.fillStyle = 'white';
+  
+    this._boardContext.font = '96px sans-serif';
+    this._boardContext.textAlign = 'center';
+    this._boardContext.textBaseline = 'middle';
+    this._boardContext.fillText('0 : 0', canvas.width / 2, canvas.height / 2);
+    // this._boardContext.fillStyle = 'blue';
+    // this._boardContext.fillRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    const geometry = new THREE.PlaneGeometry(0.3, 0.2);
+    let material = new THREE.MeshBasicMaterial({map: texture});
+    this._scoreBoard = new THREE.Mesh(geometry, material);
+    this._scoreBoard.position.y = 0.65;
+    this._scene.add(this._scoreBoard);
+  }
+
   _resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -129,11 +152,6 @@ class App {
         this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
       }
     }
-    // if (this._ball.position.distanceTo(this._leftPaddle.position) < paddleWidth / 2 + paddleHeight / 2 ) {
-    //   this._ballVelocity.x = Math.abs(this._ballVelocity.x);
-    // } else if (this._ball.position.distanceTo(this._rightPaddle.position) < paddleWidth / 2 + paddleHeight / 2 ) {
-    //   this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
-    // }
 
     const boxWidth = this._box.geometry.parameters.width / 2;
     const boxHeight = this._box.geometry.parameters.height / 2;
@@ -147,7 +165,11 @@ class App {
         this.sideBScore++;
       }
       this._ballVelocity.x = -this._ballVelocity.x;
-      this._collisionSideDiv.textContent = this._ball.position.x > 0 ? "오른쪽 면에 닿았습니다." + this.sideAScore.toString() : "왼쪽 면에 닿았습니다." + this.sideBScore.toString();
+      // this._collisionSideDiv.textContent = this._ball.position.x > 0 ? "오른쪽 면에 닿았습니다." + this.sideAScore.toString() : "왼쪽 면에 닿았습니다." + this.sideBScore.toString();
+      this._boardContext.clearRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
+      let newText = this.sideAScore.toString() + ' : ' + this.sideBScore.toString();
+      this._boardContext.fillText( newText,  this._boardContext.canvas.width / 2, this._boardContext.canvas.height / 2 );
+      this._scoreBoard.material.map.needsUpdate = true;
     }
     if (Math.abs(this._ball.position.y) > boxHeight) {
       //this.sideBScore++;

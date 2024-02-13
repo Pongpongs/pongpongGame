@@ -1,8 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
 
-
-
 class App {
   constructor() {
     const container = document.querySelector('#webgl-container');
@@ -12,8 +10,6 @@ class App {
     this._renderer.setClearColor('#87CEEB');
     container.appendChild(this._renderer.domElement);
 
-    var sideAScore;
-    var sideBScore;
     this._setupCamera();
     this._setupLight();
     this._setupPaddle();
@@ -28,36 +24,38 @@ class App {
     window.addEventListener('keyup', this._onKeyUp.bind(this), false);
 
      // Add a div element for displaying the collision side
-     this._collisionSideDiv = document.createElement('div');
-     this._collisionSideDiv.style.position = 'absolute';
-     this._collisionSideDiv.style.top = '50%';
-     this._collisionSideDiv.style.left = '50%';
-     this._collisionSideDiv.style.transform = 'translate(-50%, -50%)';
-     this._collisionSideDiv.style.fontFamily = 'Arial, sans-serif';
-     document.body.appendChild(this._collisionSideDiv);
+    this._collisionSideDiv = document.createElement('div');
+    this._collisionSideDiv.style.position = 'absolute';
+    this._collisionSideDiv.style.top = '50%';
+    this._collisionSideDiv.style.left = '50%';
+    this._collisionSideDiv.style.transform = 'translate(-50%, -50%)';
+    this._collisionSideDiv.style.fontFamily = 'Arial, sans-serif';
+    document.body.appendChild(this._collisionSideDiv);
 
-
-     this.sideAScore = 0;
-     this.sideBScore = 0;
+    this.sideAScore = 0;
+    this.sideBScore = 0;
+    this.sideCScore = 0;
+    this.sideDScore = 0;
      
     this._keys = {
-      w: false, a: false, s: false, d: false,
-      ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false,
+      s: false, w: false, 
+      ArrowUp: false, ArrowDown: false,
       '9': false, '0': false, '1': false, '2': false
     };
-
     this._resize();
   }
 
   _onKeyDown(event) {
     if (event.key in this._keys) {
       this._keys[event.key] = true;
+      event.preventDefault();
     }
   }
 
   _onKeyUp(event) {
     if (event.key in this._keys) {
       this._keys[event.key] = false;
+      event.preventDefault();
     }
   }
 
@@ -110,8 +108,8 @@ class App {
     const material = new THREE.MeshBasicMaterial({map: texture, opacity: 0.5, transparent: true});
     this._box = new THREE.Mesh(geometry, material);
     this._scene.add(this._box);
-
   }
+
   _resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -141,7 +139,6 @@ class App {
     const boxWidth = this._box.geometry.parameters.width / 2;
     const boxHeight = this._box.geometry.parameters.height / 2;
 
-    
     if (Math.abs(this._ball.position.x) > boxWidth) {      
       if (this._ball.position.x > 0) {
         this.sideAScore++;
@@ -153,9 +150,15 @@ class App {
       this._collisionSideDiv.textContent = this._ball.position.x > 0 ? "오른쪽 면에 닿았습니다." + this.sideAScore.toString() : "왼쪽 면에 닿았습니다." + this.sideBScore.toString();
     }
     if (Math.abs(this._ball.position.y) > boxHeight) {
-      //this.sideBScore++;
+      if (this._ball.position.y > 0) {
+        this.sideCScore++;
+      }
+      else {
+        this.sideDScore++;
+      }
+
       this._ballVelocity.y = -this._ballVelocity.y;
-      this._collisionSideDiv.textContent = this._ball.position.y > 0 ? '위쪽 면에 닿았습니다.' : '아래쪽 면에 닿았습니다.';
+      this._collisionSideDiv.textContent = this._ball.position.y > 0 ? "위쪽 면에 닿았습니다." + this.sideCScore.toString() : "아래쪽 면에 닿았습니다." + this.sideDScore.toString();
     }
     
     if (this.sideAScore >= 5 || this.sideBScore >= 5) {
@@ -165,10 +168,19 @@ class App {
       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
       this._collisionSideDiv.style.color = 'red'; // Change the text color
-  
       return; // Skip the rest of the update
     }
     
+    if (this.sideCScore >= 5 || this.sideDScore >= 5) {
+      // End the game and display the winner
+      this._renderer.setAnimationLoop(null); // Stop the game loop
+      const winner = this.sideCScore >= 5 ? 'C' : 'D';
+      this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
+      this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
+      this._collisionSideDiv.style.color = 'red'; // Change the text color
+      return; // Skip the rest of the update
+    }
+
     if (this._keys.w && this._leftPaddle.position.y < boxHeight - paddleHeight) {
       this._leftPaddle.position.y += paddleSpeed;
     }
