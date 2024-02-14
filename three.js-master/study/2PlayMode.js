@@ -188,10 +188,10 @@ class App {
      // this._collisionSideDiv.textContent = this._ball.position.y > 0 ? '위쪽 면에 닿았습니다.' : '아래쪽 면에 닿았습니다.';
     }
     
-    if (this.sideAScore >= 5 || this.sideBScore >= 5) {
+    if (this.sideAScore >= 3 || this.sideBScore >= 3) {
       // End the game and display the winner
       
-      const winner = this.sideAScore >= 5 ? 'A' : 'B';
+      const winner = this.sideAScore >= 3 ? 'A' : 'B';
       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
       this._collisionSideDiv.style.color = 'red'; // Change the text color
@@ -200,6 +200,10 @@ class App {
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       button1.classList.remove("hidden");
       
+      const button2 = document.getElementById("button2");
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      button2.classList.remove("hidden");
+
       this._renderer.setAnimationLoop(null); // Stop the game loop
       return; // Skip the rest of the update
     }
