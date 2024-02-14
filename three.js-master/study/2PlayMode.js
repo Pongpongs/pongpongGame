@@ -88,7 +88,7 @@ class App {
     this._ball = new THREE.Mesh(geometry, material);
     this._scene.add(this._ball);
     this._scene.add(this._ballRadius);
-    this._ballVelocity = new THREE.Vector3(0.01, 0.01, 0);
+    this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0);
   }
 
   _setupBox() {
@@ -135,6 +135,11 @@ class App {
     this._renderer.setSize(width, height);
   }
 
+  _sleep(ms) {
+    const wakeUpTime = Date.now() + ms;
+    while (Date.now() < wakeUpTime) {}
+  }
+
   _update() {
     this._ball.position.add(this._ballVelocity);
 
@@ -156,7 +161,6 @@ class App {
     const boxWidth = this._box.geometry.parameters.width / 2;
     const boxHeight = this._box.geometry.parameters.height / 2;
 
-    
     if (Math.abs(this._ball.position.x) > boxWidth) {      
       if (this._ball.position.x > 0) {
         this.sideAScore++;
@@ -166,43 +170,72 @@ class App {
       }
       this._ballVelocity.x = -this._ballVelocity.x;
       // this._collisionSideDiv.textContent = this._ball.position.x > 0 ? "오른쪽 면에 닿았습니다." + this.sideAScore.toString() : "왼쪽 면에 닿았습니다." + this.sideBScore.toString();
-      this._boardContext.clearRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
-      let newText = this.sideAScore.toString() + ' : ' + this.sideBScore.toString();
-      this._boardContext.fillText( newText,  this._boardContext.canvas.width / 2, this._boardContext.canvas.height / 2 );
-      this._scoreBoard.material.map.needsUpdate = true;
+      // this._boardContext.clearRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
+      // let newText = this.sideAScore.toString() + ' : ' + this.sideBScore.toString();
+      // this._boardContext.fillText( newText,  this._boardContext.canvas.width / 2, this._boardContext.canvas.height / 2 );
+      // this._scoreBoard.material.map.needsUpdate = true;
+      
+      // this._ball.position.x = 0;
+      // this._ball.position.y = 0;
+      // this._sleep(1000);
+      this._redrawBoard();
+      this._renderer.render(this._scene, this._camera);
     }
+    
     if (Math.abs(this._ball.position.y) > boxHeight) {
       //this.sideBScore++;
       this._ballVelocity.y = -this._ballVelocity.y;
-      this._collisionSideDiv.textContent = this._ball.position.y > 0 ? '위쪽 면에 닿았습니다.' : '아래쪽 면에 닿았습니다.';
+     // this._collisionSideDiv.textContent = this._ball.position.y > 0 ? '위쪽 면에 닿았습니다.' : '아래쪽 면에 닿았습니다.';
     }
     
     if (this.sideAScore >= 5 || this.sideBScore >= 5) {
       // End the game and display the winner
-      this._renderer.setAnimationLoop(null); // Stop the game loop
+      
       const winner = this.sideAScore >= 5 ? 'A' : 'B';
       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
       this._collisionSideDiv.style.color = 'red'; // Change the text color
-  
+      
+      const button1 = document.getElementById("button1");
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      button1.classList.remove("hidden");
+      
+      this._renderer.setAnimationLoop(null); // Stop the game loop
       return; // Skip the rest of the update
     }
     
-    if (this._keys.w && this._leftPaddle.position.y < boxHeight - paddleHeight) {
+    if (this._keys.w && this._leftPaddle.position.y < boxHeight) {
       this._leftPaddle.position.y += paddleSpeed;
     }
-    if (this._keys.s && this._leftPaddle.position.y > -boxHeight + paddleHeight) {
+    if (this._keys.s && this._leftPaddle.position.y > -boxHeight) {
       this._leftPaddle.position.y -= paddleSpeed;
     }
-    if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight - paddleHeight) {
+    if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight) {
       this._rightPaddle.position.y += paddleSpeed;
     }
-    if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight + paddleHeight) {
+    if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight) {
       this._rightPaddle.position.y -= paddleSpeed;
     }
     
     this._renderer.render(this._scene, this._camera);
   }
+
+  _redrawBoard() {
+    this._boardContext.clearRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
+    let newText = this.sideAScore.toString() + ' : ' + this.sideBScore.toString();
+    this._boardContext.fillText( newText,  this._boardContext.canvas.width / 2, this._boardContext.canvas.height / 2 );
+    this._scoreBoard.material.map.needsUpdate = true;
+    
+    this._ball.position.x = 0;
+    this._ball.position.y = 0;
+    //공위치 초기화
+    this._leftPaddle.position.y = 0;
+    this._rightPaddle.position.y = 0;
+    //패들위치 초기화
+    this._sleep(1000);
+  }
+
+
 }
 
 window.onload = () => { new App(); }
