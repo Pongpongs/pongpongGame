@@ -18,6 +18,7 @@ class App {
     this._setupPaddle();
     this._setupBall();
     this._setupBox();
+    this._setupWater();
     this._setupScoreBoard();
 
     this._controls = new OrbitControls(this._activeCamera, this._renderer.domElement);
@@ -220,6 +221,27 @@ class App {
     this._box = new THREE.Mesh(geometry, material);
     this._scene.add(this._box);
 
+  }
+
+  _setupWater() {
+    const loader = new GLTFLoader();
+
+    // .gltf 모델 파일 경로
+    const modelPath = 'water_waves/scene.gltf';
+
+    loader.load(modelPath, (gltf) => {
+        const model = gltf.scene;
+
+        // 모델의 크기, 위치, 회전을 조정할 수 있습니다.
+        model.scale.set(0.2, 0.5, 0.2); // 모델 크기 조정 예시
+        model.rotation.set(Math.PI/2, 0, Math.PI); // 모델 회전 조정 예시
+        model.position.set(0, -0.1, -0.3); // 모델 위치 조정 예시
+
+        // 로드된 모델을 씬에 추가
+        this._scene.add(model);
+    }, undefined, (error) => {
+        console.error('An error happened while loading the model:', error);
+    });
   }
 
   _setupScoreBoard() {
