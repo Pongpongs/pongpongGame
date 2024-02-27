@@ -12,6 +12,7 @@ class App {
     this._renderer.setClearColor('#FFFFFF');
     container.appendChild(this._renderer.domElement);
 
+    this._setupBackground();
     this._setupCamera();
     this._setupLight();
     this._setupPaddle();
@@ -52,24 +53,6 @@ class App {
       this._keys[event.key] = true;
     }
 
-    // if (event.key == '0')
-    // {
-    //   //this._activeCamera = this._camera;
-    //   //._camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-    //   this._camera.position.z = 1.4;
-    //   // this._camera.position.x = 0;
-    //   // this._camera.position.y = 0;
-      
-    // }
-    // if (event.key == '1')
-    // {
-    //   // this._activeCamera = this._camera2;
-    //   // this._camera.position.x = 0.5;
-    //   this._camera.position.x = -1.2;
-    //   this._camera.position.z = 0.4;
-    //   this._camera.rotation.y = -Math.PI/2;
-    //   this._camera.rotation.x = Math.PI;
-    // }
     if (event.key === '0') {
       this._activeCamera = this._camera; // 카메라1을 활성 카메라로 설정
       this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
@@ -79,8 +62,8 @@ class App {
     } else if (event.key === '1') {
         this._activeCamera = this._camera2; // 카메라2를 활성 카메라로 설정
         this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
-        this._camera2.position.set(-1.2, 0, 0.4); // 카메라 위치 변경
-        this._camera2.rotation.set(Math.PI, -Math.PI/2, 0); // 카메라 회전 변경
+        this._camera2.position.set(-1.5, 0, 0.4); // 카메라 위치 변경
+        this._camera2.rotation.set(Math.PI/2, -Math.PI/2, 0); // 카메라 회전 변경
     }
   }
 
@@ -90,16 +73,37 @@ class App {
     }
   }
 
+  _setupBackground() {
+
+    const loader = new GLTFLoader();
+    // GLTF 파일 경로. 실제 파일 경로로 대체해야 합니다.
+    const modelPath = 'sink/scene.gltf';
+    // GLTF 파일 로드
+    loader.load(modelPath, (gltf) => {
+        const model = gltf.scene;
+        // 모델의 크기, 위치, 회전 등을 조정할 수 있습니다.
+        model.scale.set(1.4, 1, 1.4); // 크기 조정 예시
+        model.position.set(-0.6, -2, -1.5); // 위치 조정 예시
+        model.rotation.set(Math.PI/2, 0, 0); // 회전 조정 예시
+        // 로드된 모델을 씬에 추가
+        this._scene.add(model);
+    }, undefined, (error) => {
+        console.error('An error happened while loading the model:', error);
+    });
+
+  }
+
   _setupCamera() {
     this._camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-    this._camera.position.z = 1.4;
+    this._camera.position.z = 2;
 
     this._camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-    this._camera2.position.x = -1.2;
-    this._camera2.position.z = 0.4;
-    this._camera2.rotation.y = -Math.PI / 2;
-    this._camera2.rotation.x = Math.PI;
 
+    // this._camera2.rotation.set(0, -Math.PI/4, Math.PI/4); // 카메라 회전 변경
+    this._camera2.position.set(-1.4, 0, 0.4); // 카메라 위치 변경
+    //this._camera2.lookAt(new THREE.Vector3(0, 0, 0)); // 카메라가 씬의 중심을 바라보도록 설정
+    
+    //this._camera2.rotation.set(0, -Math.PI/4, Math.PI/4);
     this._activeCamera = this._camera;
   }
 
@@ -200,7 +204,6 @@ class App {
             this._ball.rotation.x += rotationSpeed;
             this._ball.rotation.y += rotationSpeed;
         }
-
         // 렌더러가 씬을 다시 그리도록 합니다.
         // this._renderer.render(this._scene, this._camera); // 렌더링은 _update 메소드에서 처리될 수 있으므로 주석 처리
     };
