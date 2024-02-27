@@ -19,7 +19,7 @@ class App {
     this._setupBox();
     this._setupScoreBoard();
 
-    this._controls = new OrbitControls(this._camera, this._renderer.domElement);
+    this._controls = new OrbitControls(this._activeCamera, this._renderer.domElement);
 
     this._renderer.setAnimationLoop(this._update.bind(this));
     window.addEventListener('resize', this._resize.bind(this), false);
@@ -39,7 +39,7 @@ class App {
 
      this.sideAScore = 0;
      this.sideBScore = 0;
-    this._keys = {
+     this._keys = {
       w: false, s: false, ㄴ:false, ㅈ:false,
       ArrowUp: false, ArrowDown: false
     };
@@ -51,6 +51,37 @@ class App {
     if (event.key in this._keys) {
       this._keys[event.key] = true;
     }
+
+    // if (event.key == '0')
+    // {
+    //   //this._activeCamera = this._camera;
+    //   //._camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    //   this._camera.position.z = 1.4;
+    //   // this._camera.position.x = 0;
+    //   // this._camera.position.y = 0;
+      
+    // }
+    // if (event.key == '1')
+    // {
+    //   // this._activeCamera = this._camera2;
+    //   // this._camera.position.x = 0.5;
+    //   this._camera.position.x = -1.2;
+    //   this._camera.position.z = 0.4;
+    //   this._camera.rotation.y = -Math.PI/2;
+    //   this._camera.rotation.x = Math.PI;
+    // }
+    if (event.key === '0') {
+      this._activeCamera = this._camera; // 카메라1을 활성 카메라로 설정
+      this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
+      this._camera.position.set(0, 0, 1.4); // 카메라 위치 초기화
+      this._camera.rotation.set(0, 0, 0); // 카메라 회전 초기화
+      this._camera.lookAt(this._scene.position); // 카메라가 씬의 중심을 바라보도록 설정
+    } else if (event.key === '1') {
+        this._activeCamera = this._camera2; // 카메라2를 활성 카메라로 설정
+        this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
+        this._camera2.position.set(-1.2, 0, 0.4); // 카메라 위치 변경
+        this._camera2.rotation.set(Math.PI, -Math.PI/2, 0); // 카메라 회전 변경
+    }
   }
 
   _onKeyUp(event) {
@@ -61,7 +92,15 @@ class App {
 
   _setupCamera() {
     this._camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-    this._camera.position.z = 1;
+    this._camera.position.z = 1.4;
+
+    this._camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    this._camera2.position.x = -1.2;
+    this._camera2.position.z = 0.4;
+    this._camera2.rotation.y = -Math.PI / 2;
+    this._camera2.rotation.x = Math.PI;
+
+    this._activeCamera = this._camera;
   }
 
   _setupLight() {
@@ -80,8 +119,8 @@ class App {
     loader.load(modelPath, (gltf) => {
       this._leftPaddle = gltf.scene;
       this._rightPaddle = gltf.scene.clone();
-      this._leftPaddle.position.x = -0.7;
-      this._rightPaddle.position.x = 0.7;
+      this._leftPaddle.position.x = -0.9;
+      this._rightPaddle.position.x = 0.9;
 
       this._leftPaddle.scale.set(0.008, 0.008, 0.008);
       this._rightPaddle.scale.set(0.008, 0.008, 0.008);
@@ -171,7 +210,7 @@ class App {
 
   _setupBox() {
 
-    const geometry = new THREE.BoxGeometry(1.2, 1, 0.3);
+    const geometry = new THREE.BoxGeometry(1.6, 1.6, 0.3);
     const loader = new THREE.TextureLoader();
     const texture = loader.load('GlassTextur.png'); // 유리 텍스처 이미지를 로드
     const material = new THREE.MeshBasicMaterial({map: texture, opacity: 0.5, transparent: true});
@@ -194,22 +233,20 @@ class App {
     this._boardContext.textAlign = 'center';
     this._boardContext.textBaseline = 'middle';
     this._boardContext.fillText('0 : 0', canvas.width / 2, canvas.height / 2);
-    // this._boardContext.fillStyle = 'blue';
-    // this._boardContext.fillRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
     
     const texture = new THREE.CanvasTexture(canvas);
     const geometry = new THREE.PlaneGeometry(0.3, 0.2);
     let material = new THREE.MeshBasicMaterial({map: texture});
     this._scoreBoard = new THREE.Mesh(geometry, material);
-    this._scoreBoard.position.y = 0.65;
+    this._scoreBoard.position.y = 0.9;
     this._scene.add(this._scoreBoard);
   }
 
   _resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    this._camera.aspect = width / height;
-    this._camera.updateProjectionMatrix();
+    this._activeCamera.aspect = width / height;
+    this._activeCamera.updateProjectionMatrix();
     this._renderer.setSize(width, height);
   }
 
@@ -217,76 +254,6 @@ class App {
     const wakeUpTime = Date.now() + ms;
     while (Date.now() < wakeUpTime) {}
   }
-
-  // _update() {ㄴㄴㄴㄴㄴㄴ
-  //   if (this._ball && this._leftPaddle && this._rightPaddle) {
-  //     this._ball.position.add(this._ballVelocity);
-  //     const paddleSpeed = 0.01;
-  //     const paddleWidth = this._leftPaddle.geometry.parameters.width;
-  //     const paddleHeight = this._leftPaddle.geometry.parameters.height;
-        
-  //     if (Math.abs(this._ball.position.y - this._leftPaddle.position.y) < paddleHeight / 2 ) {
-  //         if (Math.abs(this._ball.position.x - this._leftPaddle.position.x) < paddleWidth / 2 ) {
-  //           this._ballVelocity.x = Math.abs(this._ballVelocity.x);
-  //         }
-  //     } else if (Math.abs(this._ball.position.y - this._rightPaddle.position.y) < paddleHeight / 2 ) {
-  //       if (Math.abs(this._ball.position.x - this._rightPaddle.position.x) < paddleWidth / 2 ) {
-  //         this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
-  //       }
-  //     }
-
-  //     const boxWidth = this._box.geometry.parameters.width / 2;
-  //     const boxHeight = this._box.geometry.parameters.height / 2;
-
-  //     if (Math.abs(this._ball.position.x) > boxWidth) {      
-  //       if (this._ball.position.x > 0) {
-  //         this.sideAScore++;
-  //       }
-  //       else {
-  //         this.sideBScore++;
-  //       }
-  //       this._ballVelocity.x = -this._ballVelocity.x;
-  //       this._redrawBoard();
-  //       this._renderer.render(this._scene, this._camera);
-  //     }
-        
-  //     if (Math.abs(this._ball.position.y) > boxHeight) {
-  //       this._ballVelocity.y = -this._ballVelocity.y;
-  //     }
-        
-  //     if (this.sideAScore >= 3 || this.sideBScore >= 3) {      
-  //       const winner = this.sideAScore >= 3 ? 'A' : 'B';
-  //       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
-  //       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
-  //       this._collisionSideDiv.style.color = 'red'; // Change the text color
-          
-  //       const button1 = document.getElementById("button1");
-  //       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  //       button1.classList.remove("hidden");
-          
-  //       const button2 = document.getElementById("button2");
-  //       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  //       button2.classList.remove("hidden");
-
-  //       this._renderer.setAnimationLoop(null); // Stop the game loop
-  //       return; // Skip the rest of the update
-  //     }
-        
-  //     if ((this._keys.w || this._keys.ㅈ) && this._leftPaddle.position.y < boxHeight) {
-  //       this._leftPaddle.position.y += paddleSpeed;
-  //     }
-  //     if ((this._keys.s || this._keys.ㄴ) && this._leftPaddle.position.y > -boxHeight) {
-  //       this._leftPaddle.position.y -= paddleSpeed;
-  //     }
-  //     if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight) {
-  //       this._rightPaddle.position.y += paddleSpeed;
-  //     }
-  //     if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight) {
-  //       this._rightPaddle.position.y -= paddleSpeed;
-  //     }
-  //     this._renderer.render(this._scene, this._camera); 
-  //   }
-  // }
 
   _update() {
     if (this._ball && this._leftPaddle && this._rightPaddle) {
@@ -325,9 +292,9 @@ class App {
           this._ballVelocity.x = -this._ballVelocity.x;
           // Redraw score and possibly end game
           this._redrawBoard();
-          this._renderer.render(this._scene, this._camera);
+          this._renderer.render(this._scene, this._activeCamera);
 
-          if (this.sideAScore >= 3 || this.sideBScore >= 3) {
+          if (this.sideAScore >= 10 || this.sideBScore >= 10) {
               // Handle game end
               this._endGame();
               return; // Skip the rest of the update
@@ -354,13 +321,12 @@ class App {
             this._rightPaddle.position.y -= paddleSpeed;
         }
 
-        // Render the scene
-        this._renderer.render(this._scene, this._camera);
+        this._renderer.render(this._scene, this._activeCamera);
     }
   }
 
   _endGame() {
-      const winner = this.sideAScore >= 3 ? 'A' : 'B';
+      const winner = this.sideAScore >= 10 ? 'A' : 'B';
       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
       this._collisionSideDiv.style.color = 'red'; // Change the text color
