@@ -1,0 +1,407 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.04097761586308479,
+        0.16951234638690948,
+        0.1856529265642166
+      ],
+      "min": [
+        -0.0644078478217125,
+        -0.07915285229682922,
+        0.09549814462661743
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 136368,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.999819278717041,
+        0.9986752867698669,
+        0.9997482299804688
+      ],
+      "min": [
+        -0.9999752044677734,
+        -0.9998738765716553,
+        -0.9998818635940552
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.9994080066680908,
+        0.9988604187965393,
+        0.9999707341194153,
+        1.0
+      ],
+      "min": [
+        -0.9996576309204102,
+        -0.9996055960655212,
+        -0.9995191097259521,
+        -1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.9999804496765137,
+        0.8842219114303589
+      ],
+      "min": [
+        1.95681113837054e-05,
+        1.95681113837054e-05
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 56088,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 272736,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.07559382915496826,
+        0.05920122191309929,
+        0.17639225721359253
+      ],
+      "min": [
+        -0.0034134313464164734,
+        -0.1897972822189331,
+        0.08125272393226624
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 409104,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.9999865293502808,
+        0.9998607635498047,
+        0.9999382495880127
+      ],
+      "min": [
+        -0.9996753931045532,
+        -0.9997718334197998,
+        -0.9996134042739868
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 181824,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.9995481371879578,
+        0.999921977519989,
+        0.999691903591156,
+        1.0
+      ],
+      "min": [
+        -0.9999668002128601,
+        -0.9998250007629395,
+        -0.999755322933197,
+        -1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 90912,
+      "componentType": 5126,
+      "count": 11364,
+      "max": [
+        0.9999804496765137,
+        0.8842219114303589
+      ],
+      "min": [
+        1.95681113837054e-05,
+        1.95681113837054e-05
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 224352,
+      "componentType": 5125,
+      "count": 56088,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "KOMODOZ (https://sketchfab.com/komodoz)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/rubber-med-gloves-free-to-download-ef128b0efbb1461c8c0f37b83b5f17af",
+      "title": "Rubber Med Gloves (free to download)"
+    },
+    "generator": "Sketchfab-13.26.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 448704,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 181824,
+      "byteOffset": 448704,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 545472,
+      "byteOffset": 630528,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 363648,
+      "byteOffset": 1176000,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1539648,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/Glove_rubber_baseColor.jpeg"
+    },
+    {
+      "uri": "textures/Glove_rubber_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/Glove_rubber_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Glove_rubber",
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Glove_rubber_low_Glove_rubber_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Glove_rubber_low.001_Glove_rubber_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 6,
+            "POSITION": 5,
+            "TANGENT": 7,
+            "TEXCOORD_0": 8
+          },
+          "indices": 9,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "model.fbx"
+    },
+    {
+      "children": [
+        3,
+        5
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        100.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.629206793918314e-05,
+        -99.99999999999868,
+        0.0,
+        0.0,
+        99.99999999999868,
+        -1.629206793918314e-05,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Glove_rubber_low"
+    },
+    {
+      "mesh": 0,
+      "name": "Glove_rubber_low_Glove_rubber_0"
+    },
+    {
+      "children": [
+        6
+      ],
+      "matrix": [
+        100.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.629206793918314e-05,
+        -99.99999999999868,
+        0.0,
+        0.0,
+        99.99999999999868,
+        -1.629206793918314e-05,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Glove_rubber_low.001"
+    },
+    {
+      "mesh": 1,
+      "name": "Glove_rubber_low.001_Glove_rubber_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 import * as THREE from '../build/three.module.js';
 import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from '../examples/jsm/loaders/GLTFLoader.js';
+
 
 class App {
   constructor() {
@@ -38,7 +40,7 @@ class App {
      this.sideAScore = 0;
      this.sideBScore = 0;
     this._keys = {
-      w: false, s: false,
+      w: false, s: false, ㄴ:false, ㅈ:false,
       ArrowUp: false, ArrowDown: false
     };
 
@@ -71,24 +73,48 @@ class App {
   }
 
   _setupPaddle() {
-    const geometry = new THREE.BoxGeometry(0.04, 0.2, 0.01);
-    const material = new THREE.MeshPhongMaterial({color: 0x00ff00});
-    this._leftPaddle = new THREE.Mesh(geometry, material);
-    this._rightPaddle = new THREE.Mesh(geometry, material);
-    this._leftPaddle.position.x = -0.55;
-    this._rightPaddle.position.x = 0.55;
-    this._scene.add(this._leftPaddle, this._rightPaddle);
+
+    const loader = new GLTFLoader();
+    const modelPath = 'gloves/scene.gltf';
+  
+    loader.load(modelPath, (gltf) => {
+      this._leftPaddle = gltf.scene;
+      this._rightPaddle = gltf.scene.clone();
+      this._leftPaddle.position.x = -0.55;
+      this._rightPaddle.position.x = 0.55;
+
+      this._leftPaddle.scale.set(0.01, 0.01, 0.01);
+      this._rightPaddle.scale.set(0.01, 0.01, 0.01);
+      
+      this._scene.add(this._leftPaddle, this._rightPaddle);
+
+      this._leftPaddleBox = new THREE.Box3().setFromObject(this._leftPaddle);
+      this._rightPaddleBox = new THREE.Box3().setFromObject(this._rightPaddle);
+      //이 부분이 bounding box 초기화 하는 부분
+    }, undefined, (error) => {
+      console.error('An error happened while loading the model:', error);
+    });
   }
 
   _setupBall() {
 
-    this._ballRadius = 0.02;
-    const geometry = new THREE.SphereGeometry(this._ballRadius, 32, 32);
-    const material = new THREE.MeshPhongMaterial({color: 0xff0000});
-    this._ball = new THREE.Mesh(geometry, material);
-    this._scene.add(this._ball);
-    this._scene.add(this._ballRadius);
-    this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0);
+    const loader = new GLTFLoader();
+    const modelPath = 'plates/plate.gltf';
+
+    loader.load(modelPath, (gltf) => {
+      this._ball = gltf.scene;
+      // this._ballRadius = 0.02;
+      this._ball.position.set(0, 0, 0);
+      this._ball.scale.set(0.05, 0.05, 0.05);
+      this._scene.add(this._ball);
+
+      this._ballBox = new THREE.Box3().setFromObject(this._ball);
+      this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0);
+
+    }, undefined, (error) => {
+      console.error('An error happened while loading the model:', error);
+    });
+
   }
 
   _setupBox() {
@@ -140,88 +166,155 @@ class App {
     while (Date.now() < wakeUpTime) {}
   }
 
+  // _update() {
+  //   if (this._ball && this._leftPaddle && this._rightPaddle) {
+  //     this._ball.position.add(this._ballVelocity);
+  //     const paddleSpeed = 0.01;
+  //     const paddleWidth = this._leftPaddle.geometry.parameters.width;
+  //     const paddleHeight = this._leftPaddle.geometry.parameters.height;
+        
+  //     if (Math.abs(this._ball.position.y - this._leftPaddle.position.y) < paddleHeight / 2 ) {
+  //         if (Math.abs(this._ball.position.x - this._leftPaddle.position.x) < paddleWidth / 2 ) {
+  //           this._ballVelocity.x = Math.abs(this._ballVelocity.x);
+  //         }
+  //     } else if (Math.abs(this._ball.position.y - this._rightPaddle.position.y) < paddleHeight / 2 ) {
+  //       if (Math.abs(this._ball.position.x - this._rightPaddle.position.x) < paddleWidth / 2 ) {
+  //         this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
+  //       }
+  //     }
+
+  //     const boxWidth = this._box.geometry.parameters.width / 2;
+  //     const boxHeight = this._box.geometry.parameters.height / 2;
+
+  //     if (Math.abs(this._ball.position.x) > boxWidth) {      
+  //       if (this._ball.position.x > 0) {
+  //         this.sideAScore++;
+  //       }
+  //       else {
+  //         this.sideBScore++;
+  //       }
+  //       this._ballVelocity.x = -this._ballVelocity.x;
+  //       this._redrawBoard();
+  //       this._renderer.render(this._scene, this._camera);
+  //     }
+        
+  //     if (Math.abs(this._ball.position.y) > boxHeight) {
+  //       this._ballVelocity.y = -this._ballVelocity.y;
+  //     }
+        
+  //     if (this.sideAScore >= 3 || this.sideBScore >= 3) {      
+  //       const winner = this.sideAScore >= 3 ? 'A' : 'B';
+  //       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
+  //       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
+  //       this._collisionSideDiv.style.color = 'red'; // Change the text color
+          
+  //       const button1 = document.getElementById("button1");
+  //       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  //       button1.classList.remove("hidden");
+          
+  //       const button2 = document.getElementById("button2");
+  //       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  //       button2.classList.remove("hidden");
+
+  //       this._renderer.setAnimationLoop(null); // Stop the game loop
+  //       return; // Skip the rest of the update
+  //     }
+        
+  //     if ((this._keys.w || this._keys.ㅈ) && this._leftPaddle.position.y < boxHeight) {
+  //       this._leftPaddle.position.y += paddleSpeed;
+  //     }
+  //     if ((this._keys.s || this._keys.ㄴ) && this._leftPaddle.position.y > -boxHeight) {
+  //       this._leftPaddle.position.y -= paddleSpeed;
+  //     }
+  //     if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight) {
+  //       this._rightPaddle.position.y += paddleSpeed;
+  //     }
+  //     if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight) {
+  //       this._rightPaddle.position.y -= paddleSpeed;
+  //     }
+  //     this._renderer.render(this._scene, this._camera); 
+  //   }
+  // }
+
   _update() {
-    this._ball.position.add(this._ballVelocity);
+    if (this._ball && this._leftPaddle && this._rightPaddle) {
+        this._ball.position.add(this._ballVelocity);
+        
+        // Update bounding boxes
+        this._ballBox.setFromObject(this._ball);
+        this._leftPaddleBox.setFromObject(this._leftPaddle);
+        this._rightPaddleBox.setFromObject(this._rightPaddle);
 
-//    Check for collision with paddles
-    const paddleSpeed = 0.01;
-    const paddleWidth = this._leftPaddle.geometry.parameters.width;
-    const paddleHeight = this._leftPaddle.geometry.parameters.height;
-    
-    if (Math.abs(this._ball.position.y - this._leftPaddle.position.y) < paddleHeight / 2 ) {
-      if (Math.abs(this._ball.position.x - this._leftPaddle.position.x) < paddleWidth / 2 ) {
-        this._ballVelocity.x = Math.abs(this._ballVelocity.x);
-      }
-    } else if (Math.abs(this._ball.position.y - this._rightPaddle.position.y) < paddleHeight / 2 ) {
-      if (Math.abs(this._ball.position.x - this._rightPaddle.position.x) < paddleWidth / 2 ) {
-        this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
-      }
-    }
+        // Collision detection with the paddles
+        if (this._ballBox.intersectsBox(this._leftPaddleBox)) {
+            this._ballVelocity.x = Math.abs(this._ballVelocity.x);
+        } else if (this._ballBox.intersectsBox(this._rightPaddleBox)) {
+            this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
+        }
 
-    const boxWidth = this._box.geometry.parameters.width / 2;
-    const boxHeight = this._box.geometry.parameters.height / 2;
+        // Update the game state based on ball position
+        const boxWidth = this._box.geometry.parameters.width / 2;
+        const boxHeight = this._box.geometry.parameters.height / 2;
 
-    if (Math.abs(this._ball.position.x) > boxWidth) {      
-      if (this._ball.position.x > 0) {
-        this.sideAScore++;
-      }
-      else {
-        this.sideBScore++;
-      }
-      this._ballVelocity.x = -this._ballVelocity.x;
-      // this._collisionSideDiv.textContent = this._ball.position.x > 0 ? "오른쪽 면에 닿았습니다." + this.sideAScore.toString() : "왼쪽 면에 닿았습니다." + this.sideBScore.toString();
-      // this._boardContext.clearRect(0, 0, this._boardContext.canvas.width, this._boardContext.canvas.height);
-      // let newText = this.sideAScore.toString() + ' : ' + this.sideBScore.toString();
-      // this._boardContext.fillText( newText,  this._boardContext.canvas.width / 2, this._boardContext.canvas.height / 2 );
-      // this._scoreBoard.material.map.needsUpdate = true;
-      
-      // this._ball.position.x = 0;
-      // this._ball.position.y = 0;
-      // this._sleep(1000);
-      this._redrawBoard();
-      this._renderer.render(this._scene, this._camera);
+        // Check for scoring
+        if (Math.abs(this._ball.position.x) > boxWidth) {
+            // Reset ball position and update score
+            if (this._ball.position.x > 0) {
+                this.sideBScore++;
+            } else {
+                this.sideAScore++;
+            }
+            this._ball.position.set(0, 0, 0);
+            this._ballVelocity.x = -this._ballVelocity.x;
+            // Redraw score and possibly end game
+            this._redrawBoard();
+            this._renderer.render(this._scene, this._camera);
+
+            if (this.sideAScore >= 3 || this.sideBScore >= 3) {
+                // Handle game end
+                this._endGame();
+                return; // Skip the rest of the update
+            }
+        }
+
+        // Bounce off the top and bottom walls
+        if (Math.abs(this._ball.position.y) > boxHeight) {
+            this._ballVelocity.y = -this._ballVelocity.y;
+        }
+
+        // Paddle movement based on user input
+        const paddleSpeed = 0.01;
+        if ((this._keys.w || this._keys.ㅈ) && this._leftPaddle.position.y < boxHeight) {
+            this._leftPaddle.position.y += paddleSpeed;
+        }
+        if ((this._keys.s || this._keys.ㄴ) && this._leftPaddle.position.y > -boxHeight) {
+            this._leftPaddle.position.y -= paddleSpeed;
+        }
+        if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight) {
+            this._rightPaddle.position.y += paddleSpeed;
+        }
+        if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight) {
+            this._rightPaddle.position.y -= paddleSpeed;
+        }
+
+        // Render the scene
+        this._renderer.render(this._scene, this._camera);
     }
-    
-    if (Math.abs(this._ball.position.y) > boxHeight) {
-      //this.sideBScore++;
-      this._ballVelocity.y = -this._ballVelocity.y;
-     // this._collisionSideDiv.textContent = this._ball.position.y > 0 ? '위쪽 면에 닿았습니다.' : '아래쪽 면에 닿았습니다.';
-    }
-    
-    if (this.sideAScore >= 3 || this.sideBScore >= 3) {
-      // End the game and display the winner
-      
+  }
+
+  _endGame() {
       const winner = this.sideAScore >= 3 ? 'A' : 'B';
       this._collisionSideDiv.textContent = winner + '가 이겼습니다.';
       this._collisionSideDiv.style.fontSize = '3em'; // Make the text bigger
       this._collisionSideDiv.style.color = 'red'; // Change the text color
-      
+
       const button1 = document.getElementById("button1");
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       button1.classList.remove("hidden");
-      
+
       const button2 = document.getElementById("button2");
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       button2.classList.remove("hidden");
 
       this._renderer.setAnimationLoop(null); // Stop the game loop
-      return; // Skip the rest of the update
-    }
-    
-    if (this._keys.w && this._leftPaddle.position.y < boxHeight) {
-      this._leftPaddle.position.y += paddleSpeed;
-    }
-    if (this._keys.s && this._leftPaddle.position.y > -boxHeight) {
-      this._leftPaddle.position.y -= paddleSpeed;
-    }
-    if (this._keys.ArrowUp && this._rightPaddle.position.y < boxHeight) {
-      this._rightPaddle.position.y += paddleSpeed;
-    }
-    if (this._keys.ArrowDown && this._rightPaddle.position.y > -boxHeight) {
-      this._rightPaddle.position.y -= paddleSpeed;
-    }
-    
-    this._renderer.render(this._scene, this._camera);
   }
 
   _redrawBoard() {
@@ -238,8 +331,6 @@ class App {
     //패들위치 초기화
     this._sleep(1000);
   }
-
-
 }
 
 window.onload = () => { new App(); }
