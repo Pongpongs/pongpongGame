@@ -1,0 +1,11 @@
+Model Information:
+* title:	Polychrome Dish
+* source:	https://sketchfab.com/3d-models/polychrome-dish-60a1d227b99b4399aaf80c1f3ac83860
+* author:	Thomas Flynn (https://sketchfab.com/nebulousflynn)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Polychrome Dish" (https://sketchfab.com/3d-models/polychrome-dish-60a1d227b99b4399aaf80c1f3ac83860) by Thomas Flynn (https://sketchfab.com/nebulousflynn) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

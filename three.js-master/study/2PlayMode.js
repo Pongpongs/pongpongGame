@@ -9,7 +9,7 @@ class App {
 
     this._scene = new THREE.Scene();
     this._renderer = new THREE.WebGLRenderer();
-    this._renderer.setClearColor('#87CEEB');
+    this._renderer.setClearColor('#FFFFFF');
     container.appendChild(this._renderer.domElement);
 
     this._setupCamera();
@@ -80,12 +80,15 @@ class App {
     loader.load(modelPath, (gltf) => {
       this._leftPaddle = gltf.scene;
       this._rightPaddle = gltf.scene.clone();
-      this._leftPaddle.position.x = -0.55;
-      this._rightPaddle.position.x = 0.55;
+      this._leftPaddle.position.x = -0.7;
+      this._rightPaddle.position.x = 0.7;
 
-      this._leftPaddle.scale.set(0.01, 0.01, 0.01);
-      this._rightPaddle.scale.set(0.01, 0.01, 0.01);
+      this._leftPaddle.scale.set(0.008, 0.008, 0.008);
+      this._rightPaddle.scale.set(0.008, 0.008, 0.008);
       
+      this._rightPaddle.rotation.y = -Math.PI/2; // 180도 회전
+      this._leftPaddle.rotation.y = Math.PI/2; // 180도 회전
+
       this._scene.add(this._leftPaddle, this._rightPaddle);
 
       this._leftPaddleBox = new THREE.Box3().setFromObject(this._leftPaddle);
@@ -99,23 +102,72 @@ class App {
   _setupBall() {
 
     const loader = new GLTFLoader();
-    const modelPath = 'plates/plate.gltf';
+    //const modelPath = 'plates/plate.gltf';
+    const modelPath = 'dish/scene.gltf';
 
     loader.load(modelPath, (gltf) => {
       this._ball = gltf.scene;
       // this._ballRadius = 0.02;
       this._ball.position.set(0, 0, 0);
-      this._ball.scale.set(0.05, 0.05, 0.05);
+      this._ball.scale.set(0.2, 0.2, 0.2);
       this._scene.add(this._ball);
+      
+      const box = new THREE.Box3().setFromObject(this._ball);
 
+        // bounding box의 중심을 계산
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+
+        // 모델의 모든 자식을 순회하며 중심을 기준으로 위치 조정
+      this._ball.traverse((child) => {
+          if (child.isMesh) {
+              // 중심을 기준으로 자식의 위치를 조정하여 모델을 재배치
+              child.geometry.translate(-center.x, -center.y, -center.z);
+          }
+      });
       this._ballBox = new THREE.Box3().setFromObject(this._ball);
       this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0);
-
+      //this._startBallRotation();
     }, undefined, (error) => {
       console.error('An error happened while loading the model:', error);
     });
-
   }
+
+  // _setupBall() {
+  //   // 구체 지오메트리와 재질 생성
+  //   const geometry = new THREE.SphereGeometry(0.5, 32, 32); // 반지름이 0.5, 세그먼트가 32인 구체
+  //   const material = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // 노란색 재질
+  //   this._ball = new THREE.Mesh(geometry, material); // 구체 메시 생성
+
+  //   this._ball.position.set(0, 0, 0); // 초기 위치 설정
+  //   this._ball.scale.set(0.05, 0.05, 0.02); // 크기 조정
+  //   this._scene.add(this._ball); // 장면에 구체 추가
+
+  //   // 구체의 바운딩 박스 생성
+  //   this._ballBox = new THREE.Box3().setFromObject(this._ball);
+  //   this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0); // 볼의 초기 속도 설정
+  // }
+
+
+  _startBallRotation() {
+    const rotationSpeed = 0.05; // 회전 속도 조정
+
+    // 애니메이션 루프를 사용하여 공을 회전시킵니다.
+    const animate = () => {
+        requestAnimationFrame(animate); // 다음 프레임을 위해 animate 함수를 재귀적으로 호출
+
+        // 공을 회전시킵니다.
+        if (this._ball) {
+            this._ball.rotation.x += rotationSpeed;
+            this._ball.rotation.y += rotationSpeed;
+        }
+
+        // 렌더러가 씬을 다시 그리도록 합니다.
+        // this._renderer.render(this._scene, this._camera); // 렌더링은 _update 메소드에서 처리될 수 있으므로 주석 처리
+    };
+
+    animate(); // 애니메이션 시작
+}
 
   _setupBox() {
 
@@ -166,7 +218,7 @@ class App {
     while (Date.now() < wakeUpTime) {}
   }
 
-  // _update() {
+  // _update() {ㄴㄴㄴㄴㄴㄴ
   //   if (this._ball && this._leftPaddle && this._rightPaddle) {
   //     this._ball.position.add(this._ballVelocity);
   //     const paddleSpeed = 0.01;
@@ -239,7 +291,12 @@ class App {
   _update() {
     if (this._ball && this._leftPaddle && this._rightPaddle) {
         this._ball.position.add(this._ballVelocity);
-        
+      
+        const rotationSpeed = 0.05; // 이 값은 공의 회전 속도를 결정합니다.
+        this._ball.rotation.x += rotationSpeed;
+        this._ball.rotation.y += rotationSpeed;
+
+
         // Update bounding boxes
         this._ballBox.setFromObject(this._ball);
         this._leftPaddleBox.setFromObject(this._leftPaddle);
@@ -258,23 +315,23 @@ class App {
 
         // Check for scoring
         if (Math.abs(this._ball.position.x) > boxWidth) {
-            // Reset ball position and update score
-            if (this._ball.position.x > 0) {
-                this.sideBScore++;
-            } else {
-                this.sideAScore++;
-            }
-            this._ball.position.set(0, 0, 0);
-            this._ballVelocity.x = -this._ballVelocity.x;
-            // Redraw score and possibly end game
-            this._redrawBoard();
-            this._renderer.render(this._scene, this._camera);
+          // Reset ball position and update score
+          if (this._ball.position.x > 0) {
+              this.sideBScore++;
+          } else {
+              this.sideAScore++;
+          }
+          this._ball.position.set(0, 0, 0);
+          this._ballVelocity.x = -this._ballVelocity.x;
+          // Redraw score and possibly end game
+          this._redrawBoard();
+          this._renderer.render(this._scene, this._camera);
 
-            if (this.sideAScore >= 3 || this.sideBScore >= 3) {
-                // Handle game end
-                this._endGame();
-                return; // Skip the rest of the update
-            }
+          if (this.sideAScore >= 3 || this.sideBScore >= 3) {
+              // Handle game end
+              this._endGame();
+              return; // Skip the rest of the update
+          }
         }
 
         // Bounce off the top and bottom walls
