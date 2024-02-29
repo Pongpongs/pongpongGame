@@ -180,7 +180,6 @@ class App {
   _setupBall() {
 
     const loader = new GLTFLoader();
-    //const modelPath = 'plates/plate.gltf';
     const modelPath = 'dish/scene.gltf';
 
     loader.load(modelPath, (gltf) => {
@@ -196,7 +195,6 @@ class App {
       const center = new THREE.Vector3();
       box.getCenter(center);
 
-        // 모델의 모든 자식을 순회하며 중심을 기준으로 위치 조정
       this._ball.traverse((child) => {
           if (child.isMesh) {
               // 중심을 기준으로 자식의 위치를 조정하여 모델을 재배치
@@ -205,7 +203,6 @@ class App {
       });
       this._ballBox = new THREE.Box3().setFromObject(this._ball);
       this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0);
-      //this._startBallRotation();
     }, undefined, (error) => {
       console.error('An error happened while loading the model:', error);
     });
