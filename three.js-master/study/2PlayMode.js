@@ -12,7 +12,9 @@ class App {
     this._renderer.setClearColor('#FFFFFF');
     container.appendChild(this._renderer.domElement);
 
+    this._setupWorld();
     this._setupBackground();
+
     this._setupCamera();
     this._setupLight();
     this._setupPaddle();
@@ -57,15 +59,33 @@ class App {
     if (event.key === '0') {
       this._activeCamera = this._camera; // 카메라1을 활성 카메라로 설정
       this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
+      this._controls.enabled = true;
       this._camera.position.set(0, 0, 1.4); // 카메라 위치 초기화
-      this._camera.rotation.set(0, 0, 0); // 카메라 회전 초기화
+      //this._camera.rotation.set(0, 0, 0); // 카메라 회전 초기화
       this._camera.lookAt(this._scene.position); // 카메라가 씬의 중심을 바라보도록 설정
+      this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
+
     } else if (event.key === '1') {
         this._activeCamera = this._camera2; // 카메라2를 활성 카메라로 설정
         this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
-        this._camera2.position.set(-1.5, 0, 0.4); // 카메라 위치 변경
-        this._camera2.rotation.set(Math.PI/2, -Math.PI/2, 0); // 카메라 회전 변경
+        this._controls.enabled = false;
+        this._camera2.position.set(1.4, 0, 1); // 카메라 위치 변경
+        this._camera2.rotation.set(0, Math.PI/4, Math.PI/2); // 카메라 회전 변경
+        //this._controls = new OrbitControls(this._activeCamera, this._renderer.domElement);
+        //this._camera2.lookAt(this._camera2.position()); // 카메라가 씬의 중심을 바라보도록 설정
+       // this._camera2.lookAt(this._scene.position); // 카메라가 씬의 중심을 바라보도록 설정
+        this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
+    } else if (event.key === '2') {
+      this._activeCamera = this._camera3; // 카메라2를 활성 카메라로 설정
+      this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
+      this._controls.enabled = false;
+      this._camera3.position.set(-1.4, 0, 1); // 카메라 위치 변경
+      this._camera3.rotation.set(0, -Math.PI/4, -Math.PI/2); // 카메라 회전 변경
+      this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
     }
+
+
+
   }
 
   _onKeyUp(event) {
@@ -73,6 +93,35 @@ class App {
       this._keys[event.key] = false;
     }
   }
+
+
+  _setupWorld() {
+    // 바닥을 위한 평면 생성
+    const floorGeometry = new THREE.PlaneGeometry(100, 100); // 크기 조정 가능
+    const floorMaterial = new THREE.MeshStandardMaterial({color: 0xCCCCCC}); // 재질 설정
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    //floor.rotation.x = Math.PI / 2; // X축을 중심으로 90도 회전하여 바닥으로 만듦
+    floor.position.z = -5; // 바닥의 높이 설정
+    this._scene.add(floor); // 씬에 바닥 추가
+
+    this._scene.background = new THREE.Color(0xabcdef); 
+    // 벽을 위한 평면 생성
+    // const wallGeometry = new THREE.PlaneGeometry(10, 5); // 너비와 높이 조정 가능
+    // const wallMaterial = new THREE.MeshStandardMaterial({color: 0x888888}); // 재질 설정
+    // const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+    // wall.position.z = -5; // Z축 위치 조정으로 씬 중앙에 배치
+    // wall.position.y = 2.5; // 벽의 중앙이 바닥으로부터의 높이
+    // this._scene.add(wall); // 씬에 벽 추가
+
+    // // 천장을 위한 평면 생성
+    // const ceilingGeometry = new THREE.PlaneGeometry(10, 10); // 크기 조정 가능
+    // const ceilingMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF}); // 재질 설정
+    // const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
+    // ceiling.rotation.x = Math.PI / 2; // X축을 중심으로 90도 회전하여 천장으로 만듦
+    // ceiling.position.y = 5; // 천장의 높이 설정
+    // this._scene.add(ceiling); // 씬에 천장 추가
+  }
+
 
   _setupBackground() {
 
@@ -84,8 +133,8 @@ class App {
         const model = gltf.scene;
         // 모델의 크기, 위치, 회전 등을 조정할 수 있습니다.
         model.scale.set(1.4, 1, 1.4); // 크기 조정 예시
-        model.position.set(-0.6, -2, -1.5); // 위치 조정 예시
-        model.rotation.set(Math.PI/2, 0, 0); // 회전 조정 예시
+        model.position.set(2.4, -0.6, -1.5); // 위치 조정 예시
+        model.rotation.set(Math.PI/2, Math.PI/2, 0); // 회전 조정 예시
         // 로드된 모델을 씬에 추가
         this._scene.add(model);
     }, undefined, (error) => {
@@ -99,9 +148,14 @@ class App {
     this._camera.position.z = 2;
 
     this._camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    this._camera2.position.z = 2;
+
+    this._camera3 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    this._camera3.position.z = 2;
+
 
     // this._camera2.rotation.set(0, -Math.PI/4, Math.PI/4); // 카메라 회전 변경
-    this._camera2.position.set(-1.4, 0, 0.4); // 카메라 위치 변경
+    //this._camera2.position.set(-1.4, 0, 0.4); // 카메라 위치 변경
     //this._camera2.lookAt(new THREE.Vector3(0, 0, 0)); // 카메라가 씬의 중심을 바라보도록 설정
     
     //this._camera2.rotation.set(0, -Math.PI/4, Math.PI/4);
@@ -127,8 +181,8 @@ class App {
       this._leftPaddle.position.x = -0.9;
       this._rightPaddle.position.x = 0.9;
 
-      this._leftPaddle.scale.set(0.008, 0.008, 0.008);
-      this._rightPaddle.scale.set(0.008, 0.008, 0.008);
+      this._leftPaddle.scale.set(0.01, 0.01, 0.01);
+      this._rightPaddle.scale.set(0.01, 0.01, 0.01);
       
       this._rightPaddle.rotation.y = -Math.PI/2; // 180도 회전
       this._leftPaddle.rotation.y = Math.PI/2; // 180도 회전
@@ -214,7 +268,7 @@ class App {
 
   _setupBox() {
 
-    const geometry = new THREE.BoxGeometry(1.6, 1.6, 0.3);
+    const geometry = new THREE.BoxGeometry(1.7, 1.7, 0.1);
     const loader = new THREE.TextureLoader();
     const texture = loader.load('GlassTextur.png'); // 유리 텍스처 이미지를 로드
     const material = new THREE.MeshBasicMaterial({map: texture, opacity: 0.5, transparent: true});
@@ -233,9 +287,9 @@ class App {
         const model = gltf.scene;
 
         // 모델의 크기, 위치, 회전을 조정할 수 있습니다.
-        model.scale.set(0.2, 0.5, 0.2); // 모델 크기 조정 예시
+        model.scale.set(0.3, 1.0, 0.2); // 모델 크기 조정 예시
         model.rotation.set(Math.PI/2, 0, Math.PI); // 모델 회전 조정 예시
-        model.position.set(0, -0.1, -0.3); // 모델 위치 조정 예시
+        model.position.set(0, -0.1, -0.4); // 모델 위치 조정 예시
 
         // 로드된 모델을 씬에 추가
         this._scene.add(model);
@@ -283,7 +337,8 @@ class App {
   _update() {
     if (this._ball && this._leftPaddle && this._rightPaddle) {
         this._ball.position.add(this._ballVelocity);
-      
+        this._ball.position.z = -0.5 * ((this._ball.position.x) * (this._ball.position.x)) + 0.85*0.85 * 0.5;
+
         const rotationSpeed = 0.05; // 이 값은 공의 회전 속도를 결정합니다.
         this._ball.rotation.x += rotationSpeed;
         this._ball.rotation.y += rotationSpeed;
@@ -332,7 +387,7 @@ class App {
         }
 
         // Paddle movement based on user input
-        const paddleSpeed = 0.01;
+        const paddleSpeed = 0.015;
         if ((this._keys.w || this._keys.ㅈ) && this._leftPaddle.position.y < boxHeight) {
             this._leftPaddle.position.y += paddleSpeed;
         }
