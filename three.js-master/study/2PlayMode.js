@@ -80,9 +80,6 @@ class App {
       this._camera3.rotation.set(0, -Math.PI/4, -Math.PI/2); // 카메라 회전 변경
       this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
     }
-
-
-
   }
 
   _onKeyUp(event) {
@@ -214,36 +211,16 @@ class App {
     });
   }
 
-  // _setupBall() {
-  //   // 구체 지오메트리와 재질 생성
-  //   const geometry = new THREE.SphereGeometry(0.5, 32, 32); // 반지름이 0.5, 세그먼트가 32인 구체
-  //   const material = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // 노란색 재질
-  //   this._ball = new THREE.Mesh(geometry, material); // 구체 메시 생성
-
-  //   this._ball.position.set(0, 0, 0); // 초기 위치 설정
-  //   this._ball.scale.set(0.05, 0.05, 0.02); // 크기 조정
-  //   this._scene.add(this._ball); // 장면에 구체 추가
-
-  //   // 구체의 바운딩 박스 생성
-  //   this._ballBox = new THREE.Box3().setFromObject(this._ball);
-  //   this._ballVelocity = new THREE.Vector3(0.007, 0.007, 0); // 볼의 초기 속도 설정
-  // }
-
-
   _startBallRotation() {
-    const rotationSpeed = 0.05; // 회전 속도 조정
+    const rotationSpeed = 0.055; // 회전 속도 조정
 
     // 애니메이션 루프를 사용하여 공을 회전시킵니다.
     const animate = () => {
         requestAnimationFrame(animate); // 다음 프레임을 위해 animate 함수를 재귀적으로 호출
-
-        // 공을 회전시킵니다.
         if (this._ball) {
             this._ball.rotation.x += rotationSpeed;
             this._ball.rotation.y += rotationSpeed;
         }
-        // 렌더러가 씬을 다시 그리도록 합니다.
-        // this._renderer.render(this._scene, this._camera); // 렌더링은 _update 메소드에서 처리될 수 있으므로 주석 처리
     };
 
     animate(); // 애니메이션 시작
