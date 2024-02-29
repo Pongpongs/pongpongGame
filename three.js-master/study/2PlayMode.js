@@ -212,9 +212,7 @@ class App {
   }
 
   _startBallRotation() {
-    const rotationSpeed = 0.055; // 회전 속도 조정
-
-    // 애니메이션 루프를 사용하여 공을 회전시킵니다.
+    const rotationSpeed = 0.055;
     const animate = () => {
         requestAnimationFrame(animate); // 다음 프레임을 위해 animate 함수를 재귀적으로 호출
         if (this._ball) {
