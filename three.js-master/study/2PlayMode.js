@@ -68,17 +68,19 @@ class App {
     } else if (event.key === '1') {
         this._activeCamera = this._camera2; // 카메라2를 활성 카메라로 설정
         this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
-        this._controls.enabled = false;
+        this._controls.enabled = true;
         this._camera2.position.set(1.4, 0, 1); // 카메라 위치 변경
         this._camera2.rotation.set(0, Math.PI/4, Math.PI/2); // 카메라 회전 변경
         this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
-    } else if (event.key === '2') {
+        //this._controls.update();
+      } else if (event.key === '2') {
       this._activeCamera = this._camera3; // 카메라2를 활성 카메라로 설정
       this._controls.object = this._activeCamera; // OrbitControls에 활성 카메라 업데이트
       this._controls.enabled = false;
       this._camera3.position.set(-1.4, 0, 1); // 카메라 위치 변경
       this._camera3.rotation.set(0, -Math.PI/4, -Math.PI/2); // 카메라 회전 변경
       this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
+        
     }
   }
 
@@ -132,12 +134,7 @@ class App {
 
     this._camera3 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
     this._camera3.position.z = 2;
-
-
-    // this._camera2.rotation.set(0, -Math.PI/4, Math.PI/4); // 카메라 회전 변경
-    //this._camera2.position.set(-1.4, 0, 0.4); // 카메라 위치 변경
-    //this._camera2.lookAt(new THREE.Vector3(0, 0, 0)); // 카메라가 씬의 중심을 바라보도록 설정
-    
+   
     //this._camera2.rotation.set(0, -Math.PI/4, Math.PI/4);
     this._activeCamera = this._camera;
   }
@@ -293,7 +290,9 @@ class App {
         this._ball.position.add(this._ballVelocity);
         this._ball.position.z = -0.5 * ((this._ball.position.x) * (this._ball.position.x)) + 0.85*0.85 * 0.5;
 
-        const rotationSpeed = 0.05; // 이 값은 공의 회전 속도를 결정합니다.
+        const rotationSpeed = 0.04; // 이 값은 공의 회전 속도를 결정합니다.
+//        this._gameTime += 0.01;
+
         this._ball.rotation.x += rotationSpeed;
         this._ball.rotation.y += rotationSpeed;
 
@@ -305,9 +304,10 @@ class App {
 
         // Collision detection with the paddles
         if (this._ballBox.intersectsBox(this._leftPaddleBox)) {
-            this._ballVelocity.x = Math.abs(this._ballVelocity.x);
+            this._ballVelocity.x = Math.abs(this._ballVelocity.x) * 1.1;
         } else if (this._ballBox.intersectsBox(this._rightPaddleBox)) {
-            this._ballVelocity.x = -Math.abs(this._ballVelocity.x);
+            this._ballVelocity.x = -Math.abs(this._ballVelocity.x) * 1.1;
+    
         }
 
         // Update the game state based on ball position
@@ -337,7 +337,7 @@ class App {
 
         // Bounce off the top and bottom walls
         if (Math.abs(this._ball.position.y) > boxHeight) {
-            this._ballVelocity.y = -this._ballVelocity.y;
+            this._ballVelocity.y = -this._ballVelocity.y* 1.1;
         }
 
         // Paddle movement based on user input
@@ -370,7 +370,6 @@ class App {
 
       const button2 = document.getElementById("button2");
       button2.classList.remove("hidden");
-
       this._renderer.setAnimationLoop(null); // Stop the game loop
   }
 
@@ -385,6 +384,11 @@ class App {
     //공위치 초기화
     this._leftPaddle.position.y = 0;
     this._rightPaddle.position.y = 0;
+
+    this._ballVelocity.x = 0.007;
+    this._ballVelocity.y = 0.007;
+    this._ballVelocity.z = 0;
+    
     //패들위치 초기화
     this._sleep(1000);
   }
