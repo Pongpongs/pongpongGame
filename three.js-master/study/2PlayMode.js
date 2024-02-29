@@ -171,7 +171,6 @@ class App {
 
       this._leftPaddleBox = new THREE.Box3().setFromObject(this._leftPaddle);
       this._rightPaddleBox = new THREE.Box3().setFromObject(this._rightPaddle);
-      //이 부분이 bounding box 초기화 하는 부분
     }, undefined, (error) => {
       console.error('An error happened while loading the model:', error);
     });
