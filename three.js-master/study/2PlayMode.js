@@ -137,6 +137,7 @@ class App {
         model.rotation.set(Math.PI/2, Math.PI/2, 0); // 회전 조정 예시
         // 로드된 모델을 씬에 추가
         this._scene.add(model);
+        
     }, undefined, (error) => {
         console.error('An error happened while loading the model:', error);
     });
