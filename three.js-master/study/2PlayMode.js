@@ -71,9 +71,6 @@ class App {
         this._controls.enabled = false;
         this._camera2.position.set(1.4, 0, 1); // 카메라 위치 변경
         this._camera2.rotation.set(0, Math.PI/4, Math.PI/2); // 카메라 회전 변경
-        //this._controls = new OrbitControls(this._activeCamera, this._renderer.domElement);
-        //this._camera2.lookAt(this._camera2.position()); // 카메라가 씬의 중심을 바라보도록 설정
-       // this._camera2.lookAt(this._scene.position); // 카메라가 씬의 중심을 바라보도록 설정
         this._controls.target.set(this._scene.position.x, this._scene.position.y, this._scene.position.z); // OrbitControls의 target 업데이트
     } else if (event.key === '2') {
       this._activeCamera = this._camera3; // 카메라2를 활성 카메라로 설정
@@ -105,21 +102,6 @@ class App {
     this._scene.add(floor); // 씬에 바닥 추가
 
     this._scene.background = new THREE.Color(0xabcdef); 
-    // 벽을 위한 평면 생성
-    // const wallGeometry = new THREE.PlaneGeometry(10, 5); // 너비와 높이 조정 가능
-    // const wallMaterial = new THREE.MeshStandardMaterial({color: 0x888888}); // 재질 설정
-    // const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-    // wall.position.z = -5; // Z축 위치 조정으로 씬 중앙에 배치
-    // wall.position.y = 2.5; // 벽의 중앙이 바닥으로부터의 높이
-    // this._scene.add(wall); // 씬에 벽 추가
-
-    // // 천장을 위한 평면 생성
-    // const ceilingGeometry = new THREE.PlaneGeometry(10, 10); // 크기 조정 가능
-    // const ceilingMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF}); // 재질 설정
-    // const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
-    // ceiling.rotation.x = Math.PI / 2; // X축을 중심으로 90도 회전하여 천장으로 만듦
-    // ceiling.position.y = 5; // 천장의 높이 설정
-    // this._scene.add(ceiling); // 씬에 천장 추가
   }
 
 
@@ -137,7 +119,7 @@ class App {
         model.rotation.set(Math.PI/2, Math.PI/2, 0); // 회전 조정 예시
         // 로드된 모델을 씬에 추가
         this._scene.add(model);
-        
+
     }, undefined, (error) => {
         console.error('An error happened while loading the model:', error);
     });
