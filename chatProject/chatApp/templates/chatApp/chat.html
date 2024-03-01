@@ -1,0 +1,26 @@
+<script>
+    document.addEventListener('keydown', function(event) {
+        const keyName = event.key;
+        console.log('keydown event\n\n' + 'key: ' + keyName);
+    
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                'message': keyName
+            }));
+        }
+    });
+    
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/'
+    );
+    
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log(data.message);
+    };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    </script>
+    

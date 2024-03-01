@@ -304,9 +304,9 @@ class App {
 
         // Collision detection with the paddles
         if (this._ballBox.intersectsBox(this._leftPaddleBox)) {
-            this._ballVelocity.x = Math.abs(this._ballVelocity.x) * 1.1;
+            this._ballVelocity.x = Math.abs(this._ballVelocity.x) * 1.0;
         } else if (this._ballBox.intersectsBox(this._rightPaddleBox)) {
-            this._ballVelocity.x = -Math.abs(this._ballVelocity.x) * 1.1;
+            this._ballVelocity.x = -Math.abs(this._ballVelocity.x) * 1.0;
     
         }
 
@@ -337,7 +337,7 @@ class App {
 
         // Bounce off the top and bottom walls
         if (Math.abs(this._ball.position.y) > boxHeight) {
-            this._ballVelocity.y = -this._ballVelocity.y* 1.1;
+            this._ballVelocity.y = -this._ballVelocity.y* 1.0;
         }
 
         // Paddle movement based on user input
