@@ -1,7 +1,12 @@
 <script>
+
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/'
+    );
+
     document.addEventListener('keydown', function(event) {
         const keyName = event.key;
-        console.log('keydown event\n\n' + 'key: ' + keyName);
+        console.log('keydown event\n\n' + 'key: ' + keyName );
     
         if (chatSocket.readyState === WebSocket.OPEN) {
             chatSocket.send(JSON.stringify({
@@ -10,13 +15,16 @@
         }
     });
     
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/'
-    );
+
     
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log(data.message);
+
+        if (data.position !== undefined) {
+            console.log('Position: ' + data.position); // 좌표 로깅
+            // document.getElementById('positionDisplay').innerText = 'Position: ' + data.position; // HTML 요소 업데이트
+        }
     };
     
     chatSocket.onclose = function(e) {

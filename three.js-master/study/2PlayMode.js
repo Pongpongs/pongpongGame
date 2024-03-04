@@ -225,7 +225,6 @@ class App {
     const material = new THREE.MeshBasicMaterial({map: texture, opacity: 0.5, transparent: true});
     this._box = new THREE.Mesh(geometry, material);
     this._scene.add(this._box);
-
   }
 
   _setupWater() {
@@ -236,12 +235,10 @@ class App {
 
     loader.load(modelPath, (gltf) => {
         const model = gltf.scene;
-
         // 모델의 크기, 위치, 회전을 조정할 수 있습니다.
         model.scale.set(0.3, 1.0, 0.2); // 모델 크기 조정 예시
         model.rotation.set(Math.PI/2, 0, Math.PI); // 모델 회전 조정 예시
         model.position.set(0, -0.1, -0.4); // 모델 위치 조정 예시
-
         // 로드된 모델을 씬에 추가
         this._scene.add(model);
     }, undefined, (error) => {
@@ -291,11 +288,9 @@ class App {
         this._ball.position.z = -0.5 * ((this._ball.position.x) * (this._ball.position.x)) + 0.85*0.85 * 0.5;
 
         const rotationSpeed = 0.04; // 이 값은 공의 회전 속도를 결정합니다.
-//        this._gameTime += 0.01;
 
         this._ball.rotation.x += rotationSpeed;
         this._ball.rotation.y += rotationSpeed;
-
 
         // Update bounding boxes
         this._ballBox.setFromObject(this._ball);
